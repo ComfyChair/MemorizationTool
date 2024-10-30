@@ -1,12 +1,11 @@
 from Flashcard import Flashcard
-from typing import List
-
+from DbHelper import DbHelper
 
 menu_main_str = "1. Add flashcards\n2. Practice flashcards\n3. Exit"
 menu_add_str = "\n1. Add a new flashcard\n2. Exit"
 menu_practice_str = 'Please press "y" to see the answer or press "n" to skip:'
 
-flashcards: List[Flashcard] = []
+db_helper = DbHelper(Flashcard.getBase())
 
 def menu_add():
     while True:
@@ -23,13 +22,14 @@ def menu_add():
                 a = ""
                 while not a.strip():
                     a = input("Answer:\n")
-                flashcards.append(Flashcard(q, a))
+                db_helper.add(Flashcard(question=q, answer=a))
             case _:
                 print(f"\n{choice} is not an option\n")
 
 def practice():
+    flashcards = db_helper.get_all()
     if len(flashcards) == 0:
-        print("There is no flashcard to practice!")
+        print("There is no flashcard.db to practice!")
     else:
         for item in flashcards:
             print(f"\nQuestion: {item.question}")
@@ -61,6 +61,7 @@ def menu_main():
                 print(f"\n{choice} is not an option\n")
 
 def exit_program():
+    db_helper.close()
     print("Bye!")
     exit(0)
 
